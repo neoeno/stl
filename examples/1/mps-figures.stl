@@ -1,0 +1,21 @@
+sheet "Violence" {
+    area [A3:] {
+        attributeLabels [3]
+        recordKeys [A]
+        columnTypes {
+            Date "Month-Year"
+            Percentage "Violence with injury (VWI) SDR"
+            Percentage "Knife SDR"
+            Percentage "Gun Crime SDR"
+            Percentage "Dog Attacks SDR"
+        }
+    }
+}
+
+sheet "PCSO Strength-Borough" {
+    area: [A4:] {
+        attributeLabels [A]
+        recordKeys [5]
+        skipRecords "Borough Total", "MPS Total"
+    }
+}

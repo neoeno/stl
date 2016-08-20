@@ -22,8 +22,15 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.11.8:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: org.scala-lang:scala-reflect:2.11.7:jar" level="project" />
-    <orderEntry type="library" scope="TEST" name="SBT: org.scala-lang.modules:scala-xml_2.11:1.0.2:jar" level="project" />
+    <orderEntry type="library" name="SBT: stax:stax-api:1.0.1:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.apache.xmlbeans:xmlbeans:2.6.0:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.apache.poi:poi-ooxml-schemas:3.14:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.apache.poi:poi-ooxml:3.14:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.apache.poi:poi:3.14:jar" level="project" />
+    <orderEntry type="library" name="SBT: commons-codec:commons-codec:1.10:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.github.virtuald:curvesapi:1.03:jar" level="project" />
     <orderEntry type="library" scope="TEST" name="SBT: org.scalatest:scalatest_2.11:2.2.6:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="SBT: org.scala-lang.modules:scala-xml_2.11:1.0.2:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="SBT: org.scala-lang:scala-reflect:2.11.7:jar" level="project" />
   </component>
 </module>
