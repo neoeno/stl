@@ -46,6 +46,7 @@ class Operators$Test extends FunSpec {
   describe(".column") {
     it ("returns the cell in the given cell's row and the provided column") {
       val cell = sheet.getRow(0).getCell(0)
+      assert(Operators.column(0)(cell) == sheet.getRow(0).getCell(0))
       assert(Operators.column(1)(cell) == sheet.getRow(0).getCell(1))
     }
   }

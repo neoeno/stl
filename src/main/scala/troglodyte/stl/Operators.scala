@@ -15,7 +15,7 @@ object Operators {
   }
 
   val column = (colNum: Int) => (cell: Cell) =>
-    cell.getRow.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK)
+    cell.getRow.getCell(colNum, MissingCellPolicy.CREATE_NULL_AS_BLANK)
 
   val value = (cell: Cell) => Spreadsheet.getCellValue(cell)
 
