@@ -1,21 +1,11 @@
 package troglodyte.stl
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook
 import org.scalatest.FunSpec
 
 class Spreadsheet$Test extends FunSpec {
   describe("given a simple Excel file") {
-    val workbook = new HSSFWorkbook()
-    val sheet = workbook.createSheet("sheet1")
-    val headingRow = sheet.createRow(0)
-    headingRow.createCell(0).setCellValue("col1")
-    headingRow.createCell(1).setCellValue("col2")
-    val valueRow1 = sheet.createRow(1)
-    valueRow1.createCell(0).setCellValue(1)
-    valueRow1.createCell(1).setCellValue(2)
-    val valueRow2 = sheet.createRow(2)
-    valueRow2.createCell(0).setCellValue(3)
-    valueRow2.createCell(1).setCellValue(4)
+    val workbook = TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4))
+    val sheet = workbook.getSheet("sheet1")
 
     describe(".getSheet") {
       describe("given an extant sheet name") {
