@@ -19,13 +19,6 @@ object Spreadsheet {
       .filter(cell => range.isInRange(cell.getRowIndex, cell.getColumnIndex))
   }
 
-  // This belongs somewhere else
-  def constructMapWithFns[T](keyFns: List[T => String], valueFns: List[T => Any])(item: T): Map[String, Any] = {
-    val keys = keyFns.map(fn => fn(item))
-    val values = valueFns.map(fn => fn(item))
-    keys.zip(values).toMap
-  }
-
   def getCellValue(cell: Cell): Any = {
     try {
       cell.getCellType match {

@@ -4,18 +4,25 @@ import java.io.File
 
 import org.apache.poi.ss.usermodel._
 import troglodyte.stl.Operators._
+import troglodyte.stl.Translator.Transformer
 
 object Main extends App {
   val task = Map(
     "sheet" -> "Violence",
     "keyCells" -> "A4:A101",
-    "attributeNameFns" -> List(
-      columnHeading("A3", "Date"),
-      fixedString("VAP Offences")
-    ),
-    "attributeValueFns" -> List(
-      value,
-      column(1).andThen(value)
+    "attributes" -> List(
+      Transformer(
+        keyFn = fixedString("Date"),
+        valueFn = value
+      ),
+      Transformer(
+        keyFn = columnHeading("B3", "VAP Offences"),
+        valueFn = column(1).andThen(value)
+      ),
+      Transformer(
+        keyFn = columnHeading("C3", "Violence with injury (VWI)"),
+        valueFn = column(2).andThen(value)
+      )
     )
   )
 

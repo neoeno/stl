@@ -1,7 +1,7 @@
 package troglodyte.stl
 
-import org.apache.poi.ss.usermodel.{Cell, Sheet}
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy
+import org.apache.poi.ss.usermodel.{Cell, Sheet}
 import org.apache.poi.ss.util.CellAddress
 
 object Operators {
@@ -14,7 +14,7 @@ object Operators {
     label
   }
 
-  val column = (i: Int) => (cell: Cell) =>
+  val column = (colNum: Int) => (cell: Cell) =>
     cell.getRow.getCell(1, MissingCellPolicy.CREATE_NULL_AS_BLANK)
 
   val value = (cell: Cell) => Spreadsheet.getCellValue(cell)

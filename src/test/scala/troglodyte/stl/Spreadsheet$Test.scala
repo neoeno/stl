@@ -48,17 +48,4 @@ class Spreadsheet$Test extends FunSpec {
       // left untested because i'm lazy
     }
   }
-
-  describe(".constructMapWithFunctions") {
-    it ("returns a map composed by zipping the returns of the keyFns and valueFns over the item") {
-      val constructor = Spreadsheet.constructMapWithFns[Int](List(
-        n => (n + 1).toString,
-        _ => "hello!"
-      ), List(
-        n => n + 2,
-        n => "world!" + n
-      ))(_)
-      assert(constructor(1) == Map("2" -> 3, "hello!" -> "world!1"))
-    }
-  }
 }
