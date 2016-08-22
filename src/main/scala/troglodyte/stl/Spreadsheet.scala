@@ -6,6 +6,7 @@ import org.apache.poi.ss.util.CellRangeAddress
 import scala.collection.JavaConverters._
 
 object Spreadsheet {
+  case class CellParsingException(message: String) extends Exception(message)
   type Task = Map[String, Any]
 
   def getSheet(workbook: Workbook)(sheetName: String): Sheet = {
@@ -20,22 +21,20 @@ object Spreadsheet {
   }
 
   def getCellValue(cell: Cell): Any = {
-    try {
-      cell.getCellType match {
+    cell.getCellType match {
+      case Cell.CELL_TYPE_STRING => cell.getRichStringCellValue.getString
+      case Cell.CELL_TYPE_NUMERIC => if (DateUtil.isCellDateFormatted(cell)) cell.getDateCellValue else cell.getNumericCellValue
+      case Cell.CELL_TYPE_BOOLEAN => cell.getBooleanCellValue
+      case Cell.CELL_TYPE_BLANK => ""
+      // No real spreadsheet should have an error without a formula, but for completeness...
+      case Cell.CELL_TYPE_ERROR => throw CellParsingException(s"Cell at ${cell.getAddress.toString} contains an error, cannot be evaluated")
+      case Cell.CELL_TYPE_FORMULA => cell.getCachedFormulaResultType match {
         case Cell.CELL_TYPE_STRING => cell.getRichStringCellValue.getString
         case Cell.CELL_TYPE_NUMERIC => if (DateUtil.isCellDateFormatted(cell)) cell.getDateCellValue else cell.getNumericCellValue
         case Cell.CELL_TYPE_BOOLEAN => cell.getBooleanCellValue
-        case Cell.CELL_TYPE_BLANK => ""
-        case Cell.CELL_TYPE_FORMULA => cell.getCachedFormulaResultType match {
-          case Cell.CELL_TYPE_STRING => cell.getRichStringCellValue.getString
-          case Cell.CELL_TYPE_NUMERIC => if (DateUtil.isCellDateFormatted(cell)) cell.getDateCellValue else cell.getNumericCellValue
-          case Cell.CELL_TYPE_BOOLEAN => cell.getBooleanCellValue
-          case _ => throw new IllegalArgumentException(s"Can't get value of cell of type ${cell.getCellType}")
-        }
-        case _ => throw new IllegalArgumentException(s"Can't get value of cell of type ${cell.getCellType}")
+        // Blank can't be returned here, so omitted
+        case Cell.CELL_TYPE_ERROR => throw CellParsingException(s"Cell at ${cell.getAddress.toString} contains an error, cannot be evaluated")
       }
-    } catch {
-      case _: Exception => null
     }
   }
 }

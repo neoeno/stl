@@ -1,10 +1,22 @@
 package troglodyte.stl
 
 import org.scalatest.FunSpec
+import troglodyte.stl.Spreadsheet.CellParsingException
 
 class Spreadsheet$Test extends FunSpec {
   describe("given a simple Excel file") {
-    val workbook = TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4))
+    val workbook = TestFactory.makeWorkbook("sheet1")(
+      List("col1", "col2"),
+      List(1,      2),
+      List(3,      4),
+      List(1.5,    false,  null),
+      List(
+        TestFactory.makeFormula("LEFT(\"hello\", 1)"),
+        TestFactory.makeFormula("A2+2.5"),
+        TestFactory.makeFormula("AND(True, False)"),
+        TestFactory.makeFormula("1/0")
+      )
+    )
     val sheet = workbook.getSheet("sheet1")
 
     describe(".getSheet") {
@@ -45,7 +57,56 @@ class Spreadsheet$Test extends FunSpec {
     }
 
     describe(".getCellValue") {
-      // left untested because i'm lazy
+      describe("given a string cell") {
+        it ("returns the string value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(0).getCell(0)).toString == "col1")
+        }
+      }
+
+      describe("given a numeric cell") {
+        it ("returns the numeric value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(3).getCell(0)).toString == "1.5")
+        }
+      }
+
+      describe("given a boolean cell") {
+        it ("returns the boolean value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(3).getCell(1)).toString == "false")
+        }
+      }
+
+      describe("given a blank cell") {
+        it ("returns an empty string") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(3).getCell(2)).toString == "")
+        }
+      }
+
+      describe("given a string formula cell") {
+        it ("returns the cached value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(4).getCell(0)).toString == "h")
+        }
+      }
+
+      describe("given a numeric formula cell") {
+        it ("returns the cached value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(4).getCell(1)).toString == "3.5")
+        }
+      }
+
+      describe("given a boolean formula cell") {
+        it ("returns the cached value") {
+          assert(Spreadsheet.getCellValue(sheet.getRow(4).getCell(2)).toString == "false")
+        }
+      }
+
+      describe("given an erroneous formula cell") {
+        it ("throws a CellParsingException") {
+          val caught = intercept[CellParsingException] {
+            Spreadsheet.getCellValue(sheet.getRow(4).getCell(3))
+          }
+          assert(caught.message == "Cell at D5 contains an error, cannot be evaluated")
+        }
+      }
     }
   }
 }
