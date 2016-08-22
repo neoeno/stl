@@ -5,11 +5,13 @@ import org.apache.poi.ss.usermodel.{Cell, Sheet}
 import org.apache.poi.ss.util.CellAddress
 
 object Operators {
+  case class SpreadsheetAssertionException(message: String) extends Exception(message)
+
   val fixedString = (value: String) => (cell: Cell) => value
 
   val columnHeading = (cellAddress: String, label: String) => (cell: Cell) => {
     if (!valueOfCellAtAddress(cellAddress, cell.getSheet).contains(label)) {
-      throw new IllegalArgumentException(s"Column heading cell at $cellAddress did not match given value '$label'")
+      throw new SpreadsheetAssertionException(s"Column heading cell at $cellAddress did not match given value '$label'")
     }
     label
   }

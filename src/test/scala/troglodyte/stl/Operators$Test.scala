@@ -1,6 +1,7 @@
 package troglodyte.stl
 
 import org.scalatest.FunSpec
+import troglodyte.stl.Operators.SpreadsheetAssertionException
 
 class Operators$Test extends FunSpec {
   val workbook = TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4), List(5))
@@ -24,7 +25,7 @@ class Operators$Test extends FunSpec {
     describe("with a cell ref not matching the label") {
       it ("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
-        val caught = intercept[IllegalArgumentException] {
+        val caught = intercept[SpreadsheetAssertionException] {
           Operators.columnHeading("B1", "col1")(cell)
         }
         assert(caught.getMessage == "Column heading cell at B1 did not match given value 'col1'")
@@ -34,7 +35,7 @@ class Operators$Test extends FunSpec {
     describe("with a cell ref for a row that does not exist and a column that does not exist") {
       it ("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
-        val caught = intercept[IllegalArgumentException] {
+        val caught = intercept[SpreadsheetAssertionException] {
           Operators.columnHeading("Z40", "col1")(cell)
         }
         assert(caught.getMessage == "Column heading cell at Z40 did not match given value 'col1'")
@@ -44,10 +45,10 @@ class Operators$Test extends FunSpec {
     describe("with a cell ref for a cell that does not exist in a row that does exist") {
       it ("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
-        val caught = intercept[IllegalArgumentException] {
-          Operators.columnHeading("A40", "col1")(cell)
+        val caught = intercept[SpreadsheetAssertionException] {
+          Operators.columnHeading("Z1", "col1")(cell)
         }
-        assert(caught.getMessage == "Column heading cell at A40 did not match given value 'col1'")
+        assert(caught.getMessage == "Column heading cell at Z1 did not match given value 'col1'")
       }
     }
   }
