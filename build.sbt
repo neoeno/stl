@@ -7,6 +7,7 @@ scalaVersion := "2.11.8"
 // Main
 libraryDependencies += "org.apache.poi" % "poi" % "3.14"
 libraryDependencies += "org.apache.poi" % "poi-ooxml" % "3.14"
+libraryDependencies += "org.parboiled" %% "parboiled" % "2.1.3"
 
 // Test
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"

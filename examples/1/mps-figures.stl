@@ -1,21 +1,8 @@
-sheet "Violence" {
-    area [A3:] {
-        attributeLabels [3]
-        recordKeys [A]
-        columnTypes {
-            Date "Month-Year"
-            Percentage "Violence with injury (VWI) SDR"
-            Percentage "Knife SDR"
-            Percentage "Gun Crime SDR"
-            Percentage "Dog Attacks SDR"
-        }
-    }
-}
+NAME      "VAP Offences By Month"
+SHEET     "Violence"
+KEY_CELLS [A4:A101]
 
-sheet "PCSO Strength-Borough" {
-    area: [A4:] {
-        attributeLabels [A]
-        recordKeys [5]
-        skipRecords "Borough Total", "MPS Total"
-    }
-}
+COLUMN fixedString("Date")
+    => column(0) | value
+COLUMN columnHeading("B3", "VAP Offences")
+    => column(1) | value
