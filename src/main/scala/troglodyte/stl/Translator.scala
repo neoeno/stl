@@ -19,7 +19,7 @@ object Translator {
     val attributes = task("attributes").asInstanceOf[List[Transformer[Cell]]]
 
     Spreadsheet.cellsInRange(
-      Spreadsheet.getSheet(workbook)(sheetName)
+      Spreadsheet.getSheet(workbook)(sheetName).get
     )(keyCellsRange).map(
       constructMapWithTransformers(attributes)
     )
