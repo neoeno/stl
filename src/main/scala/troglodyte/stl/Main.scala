@@ -13,7 +13,7 @@ object Main extends App {
     "attributes" -> List(
       Transformer(
         keyFn = fixedString("Date"),
-        valueFn = value
+        valueFn = column(0).andThen(value)
       ),
       Transformer(
         keyFn = columnHeading("B3", "VAP Offences"),
@@ -28,7 +28,5 @@ object Main extends App {
 
   val workbook = WorkbookFactory.create(new File("examples/1/mps-figures.xls"))
 
-  println(
-    Translator.extractRecordsByTask(task)(workbook).toList
-  )
+  Translator.extractRecordsByTask(task)(workbook).foreach(println(_))
 }
