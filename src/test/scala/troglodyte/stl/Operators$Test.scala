@@ -71,10 +71,35 @@ class Operators$Test extends FunSpec {
     }
   }
 
+  describe(".valueOr") {
+    describe("given some value") {
+      it("returns the value of the cell") {
+        val cell = sheet.getRow(0).getCell(0)
+        assert(Operators.valueOr("not this")(Some(cell)) == "col1")
+      }
+    }
+
+    describe("given no value") {
+      it("returns the alternative value") {
+        val cell = sheet.getRow(0).getCell(0)
+        assert(Operators.valueOr("this")(None) == "this")
+      }
+    }
+  }
+
   describe(".value") {
-    it ("returns the value of the cell") {
-      val cell = sheet.getRow(0).getCell(0)
-      assert(Operators.value(Some(cell)) == "col1")
+    describe("given some value") {
+      it("returns the value of the cell") {
+        val cell = sheet.getRow(0).getCell(0)
+        assert(Operators.value(Some(cell)) == "col1")
+      }
+    }
+
+    describe("given no value") {
+      it("returns null") {
+        val cell = sheet.getRow(0).getCell(0)
+        assert(Operators.value(None) == null)
+      }
     }
   }
 }
