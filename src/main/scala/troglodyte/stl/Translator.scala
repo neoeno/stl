@@ -5,8 +5,7 @@ import org.apache.poi.ss.usermodel.{Cell, Workbook}
 object Translator {
   type Task = Map[String, Any]
   case class Transformer[T](keyFn: T => String, valueFn: T => Any)
-
-  // This belongs somewhere else
+  
   def constructMapWithTransformers[T](transformers: List[Transformer[T]])(item: T): Map[String, Any] = {
     val keys = transformers.map(_.keyFn(item))
     val values = transformers.map(_.valueFn(item))
