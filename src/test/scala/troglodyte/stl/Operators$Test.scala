@@ -8,7 +8,7 @@ class Operators$Test extends FunSpec {
   val sheet = workbook.getSheet("sheet1")
 
   describe(".fixedString") {
-    it ("returns the fixed string") {
+    it("returns the fixed string") {
       val cell = sheet.getRow(0).getCell(0)
       assert(Operators.fixedString("hello!")(cell) == "hello!")
     }
@@ -16,14 +16,14 @@ class Operators$Test extends FunSpec {
 
   describe(".columnHeading") {
     describe("with a cell ref matching the label") {
-      it ("returns the label") {
+      it("returns the label") {
         val cell = sheet.getRow(0).getCell(0)
         assert(Operators.columnHeading("A1", "col1")(cell) == "col1")
       }
     }
 
     describe("with a cell ref not matching the label") {
-      it ("throws an exception") {
+      it("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
         val caught = intercept[SpreadsheetAssertionException] {
           Operators.columnHeading("B1", "col1")(cell)
@@ -33,7 +33,7 @@ class Operators$Test extends FunSpec {
     }
 
     describe("with a cell ref for a row that does not exist and a column that does not exist") {
-      it ("throws an exception") {
+      it("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
         val caught = intercept[SpreadsheetAssertionException] {
           Operators.columnHeading("Z40", "col1")(cell)
@@ -43,7 +43,7 @@ class Operators$Test extends FunSpec {
     }
 
     describe("with a cell ref for a cell that does not exist in a row that does exist") {
-      it ("throws an exception") {
+      it("throws an exception") {
         val cell = sheet.getRow(0).getCell(0)
         val caught = intercept[SpreadsheetAssertionException] {
           Operators.columnHeading("Z1", "col1")(cell)
