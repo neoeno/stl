@@ -21,5 +21,5 @@ object Main extends App {
         valueFn = column(2).andThen(value)
       )
     )
-  ).run(WorkbookFactory.create(new File("examples/1/mps-figures.xls"))).foreach(println(_))
+  ).exportWorkbookToRecords(WorkbookFactory.create(new File("examples/1/mps-figures.xls"))).foreach(println(_))
 }

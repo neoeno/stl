@@ -21,7 +21,7 @@ class Task$Test extends FunSpec {
 
       it("extracts the records from a workbook") {
         assert(
-          simpleTask.run(workbook).toList ==
+          simpleTask.exportWorkbookToRecords(workbook).toList ==
             List(Map("col1" -> 1, "col2" -> 2), Map("col1" -> 3, "col2" -> 4)))
       }
     }
@@ -49,7 +49,7 @@ class Task$Test extends FunSpec {
 
       it("extracts the records from a workbook") {
         assert(
-          simpleTask.run(workbook).toList ==
+          simpleTask.exportWorkbookToRecords(workbook).toList ==
             List(
               Map("col1" -> "hello", "col2" -> "world"),
               Map("col1" -> 1, "col2" -> null),
