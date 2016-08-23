@@ -10,18 +10,8 @@ object STLParser {
   type Task = Map[String, Any]
   case class STLPair(key: String, value: Any)
   case class STLAddressRange(addressRange: String)
-  case class STLFunction(name: String, arguments: Seq[Any])
-  case class STLExpression(functions: Seq[STLFunction])
-  case class STLColumnDefinition(keyFn: STLExpression, valueFn: STLExpression)
+  case class STLColumnDefinition(keyFn: Function[Any, Any], valueFn: Function[Any, Any])
   case class STLParserException(message: String) extends Exception(message)
-
-  val stlFunctions = Map(
-    "fixedString" -> Operators.fixedString,
-    "columnHeading" -> Operators.columnHeading,
-    "column" -> Operators.columnHeading,
-    "valueOr" -> Operators.valueOr,
-    "value" -> Operators.value
-  )
 
   def parseToTask(stl: String): Task = {
     val parser = new RealSTLParser(stl.trim)
@@ -29,52 +19,61 @@ object STLParser {
     res match {
       case Success(rel) => outputToTask(rel)
       case Failure(pe:ParseError) => throw STLParserException(s"Could not parse STL: \n${parser.formatError(pe)}")
-      case _ => throw new Exception("oops!")
+      case e: Throwable => throw new Exception("oops!", e)
     }
   }
 
-  def makeKeyFn(stlExpression: STLExpression): (Cell => String) = {
-    stlExpression.functions.map(stlFunction => {
-      (stlFunction.name match {
-        case "fixedString" => Operators.fixedString(stlFunction.arguments(0).asInstanceOf[String])
-        case "columnHeading" => Operators.columnHeading(stlFunction.arguments(0).asInstanceOf[String], stlFunction.arguments(1).asInstanceOf[String])
-        case "column" => Operators.column(stlFunction.arguments(0).asInstanceOf[String].toInt)
-        case "valueOr" => Operators.valueOr(stlFunction.arguments(0).asInstanceOf[String])
-        case "value" => Operators.value
-      }).asInstanceOf[Any => Any]
-    }).reduce((a, b) => a.compose(b)).asInstanceOf[Cell => String]
-  }
-
-  def makeValueFn(stlExpression: STLExpression): (Cell => Any) = {
-    stlExpression.functions.map(stlFunction => {
-      (stlFunction.name match {
-        case "fixedString" => Operators.fixedString(stlFunction.arguments(0).asInstanceOf[String])
-        case "columnHeading" => Operators.columnHeading(stlFunction.arguments(0).asInstanceOf[String], stlFunction.arguments(1).asInstanceOf[String])
-        case "column" => Operators.column(stlFunction.arguments(0).asInstanceOf[String].toInt)
-        case "valueOr" => Operators.valueOr(stlFunction.arguments(0).asInstanceOf[String])
-        case "value" => Operators.value
-      }).asInstanceOf[Any => Any]
-    }).reduce((a, b) => b.compose(a)).asInstanceOf[Cell => Any]
-  }
-
   def outputToTask(pairs: Seq[Any]): Task = {
-    val toTaskKey = Map("NAME" -> "name", "SHEET" -> "sheet", "KEY_CELLS" -> "keyCells")
     val map = pairs
       .filter(_.isInstanceOf[STLPair])
       .map(_.asInstanceOf[STLPair])
-      .map(pair => (toTaskKey(pair.key), pair.value))
+      .map(pair => (pair.key, pair.value))
       .toMap
     map
-      .updated("keyCells", map("keyCells").asInstanceOf[STLAddressRange].addressRange)
       .updated("attributes",
         pairs
           .filter(_.isInstanceOf[STLColumnDefinition])
           .map(_.asInstanceOf[STLColumnDefinition])
-          .map(column => Transformer(makeKeyFn(column.keyFn), makeValueFn(column.valueFn)))
+          .map(column => Transformer(column.keyFn.asInstanceOf[Cell => String], column.valueFn.asInstanceOf[Cell => Any]))
           .toList)
   }
 
+  object STLOperators {
+    val fixedString = (args: Seq[Any]) => {
+      Operators.fixedString(args(0).asInstanceOf[String]).asInstanceOf[Any => Any]
+    }
+
+    val columnHeading = (args: Seq[Any]) => {
+      Operators.columnHeading(args(0).asInstanceOf[String], args(1).asInstanceOf[String]).asInstanceOf[Any => Any]
+    }
+
+    val column = (args: Seq[Any]) => {
+      Operators.column(args(0).asInstanceOf[Int]).asInstanceOf[Any => Any]
+    }
+
+    val valueOr = (args: Seq[Any]) => {
+      Operators.valueOr(args(0).asInstanceOf[String]).asInstanceOf[Any => Any]
+    }
+
+    val value = (args: Seq[Any]) => {
+      Operators.value.asInstanceOf[Any => Any]
+    }
+  }
+
   class RealSTLParser(val input: ParserInput) extends Parser {
+    val actionTypes = Map("NAME" -> "name", "SHEET" -> "sheet", "KEY_CELLS" -> "keyCells")
+    val stlFunctions = Map(
+      "fixedString" -> STLOperators.fixedString,
+      "columnHeading" -> STLOperators.columnHeading,
+      "column" -> STLOperators.column,
+      "valueOr" -> STLOperators.valueOr,
+      "value" -> STLOperators.value
+    )
+
+    def partialApplyFn = (fn: Seq[Any] => Any => Any, args: Seq[Any]) => fn(args)
+    def chainFns = (fns: Seq[Any => Any]) => Function.chain(fns)
+    def updateMap = (key: String, value: Any, map: Map[String, Any]) => map.updated(key, value)
+
     def InputLine = rule { oneOrMore(Statement).separatedBy(oneOrMore(NewLine)) ~ EOI }
 
     def Statement = rule { KeyValueStatement | ColumnStatement }
@@ -83,21 +82,21 @@ object STLParser {
 
     def ColumnStatement = rule { "COLUMN" ~ Spaces ~ Expression ~ optional(Spaces ~ NewLine ~ Spaces) ~ "=>" ~ Spaces ~ Expression ~ Spaces ~> STLColumnDefinition }
 
-    def Expression = rule { oneOrMore(Function).separatedBy(Spaces ~ "|" ~ Spaces) ~> STLExpression }
+    def Expression = rule { oneOrMore(ExpressionFunction).separatedBy(Spaces ~ "|" ~ Spaces) ~> chainFns }
 
-    def Function = rule { FunctionName ~ (ArgumentList | push(Vector())) ~> STLFunction }
+    def ExpressionFunction = rule { FunctionName ~ (ArgumentList | push(Vector())) ~> partialApplyFn }
 
-    def FunctionName = rule { capture(oneOrMore(CharPredicate.Alpha)) }
+    def FunctionName = rule { valueMap(stlFunctions) }
 
     def ArgumentList = rule { "(" ~ zeroOrMore(Argument).separatedBy(Spaces ~ "," ~ Spaces) ~ ")" }
 
     def Argument = rule { StringLiteral | NumberLiteral }
 
-    def Action = rule { capture("NAME" | "SHEET" | "KEY_CELLS") }
+    def Action = rule { valueMap(actionTypes) }
 
     def Value = rule { StringLiteral | AddressRangeLiteral }
 
-    def AddressRangeLiteral = rule { "[" ~ capture(AddressRange) ~> STLAddressRange ~ "]"}
+    def AddressRangeLiteral = rule { "[" ~ capture(AddressRange) ~ "]"}
 
     def AddressRange = rule { CellRef ~ ":" ~ CellRef }
 
@@ -105,7 +104,7 @@ object STLParser {
 
     def StringLiteral = rule { '"' ~ capture(zeroOrMore(noneOf("\""))) ~ '"' }
 
-    def NumberLiteral = rule { capture(oneOrMore(CharPredicate.Digit)) }
+    def NumberLiteral = rule { capture(oneOrMore(CharPredicate.Digit)) ~> (_.toInt) }
 
     def Spaces = rule { zeroOrMore(CharPredicate(" \t")) }
 
