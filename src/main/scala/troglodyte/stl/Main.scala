@@ -4,13 +4,10 @@ import java.io.File
 
 import org.apache.poi.ss.usermodel._
 import troglodyte.stl.Operators._
-import troglodyte.stl.Translator.Transformer
 
 object Main extends App {
-  val task = Map(
-    "sheet" -> "Violence",
-    "keyCells" -> "A4:A101",
-    "attributes" -> List(
+  new Task("Violence", "A4:A101",
+    List(
       Transformer(
         keyFn = fixedString("Date"),
         valueFn = column(0).andThen(value)
@@ -24,9 +21,5 @@ object Main extends App {
         valueFn = column(2).andThen(value)
       )
     )
-  )
-
-  val workbook = WorkbookFactory.create(new File("examples/1/mps-figures.xls"))
-
-  Translator.extractRecordsByTask(task)(workbook).foreach(println(_))
+  ).run(WorkbookFactory.create(new File("examples/1/mps-figures.xls"))).foreach(println(_))
 }
