@@ -1,6 +1,5 @@
 package troglodyte.stl
 
-import org.apache.poi.ss.usermodel.Row.MissingCellPolicy
 import org.apache.poi.ss.usermodel.{Cell, Sheet}
 import org.apache.poi.ss.util.CellAddress
 
