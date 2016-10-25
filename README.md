@@ -2,6 +2,25 @@
 
 Towards creating a simple DSL for converting (Excel) spreadsheets to nicer formats.
 
+## Get it running
+
+Sure hope you're using a Mac and have brew!
+
+```bash
+brew install scala
+brew install sbt
+git clone git@github.com:neoeno/stl.git
+cd stl
+
+# Run tests
+sbt test
+
+# Run example and print to STDOUT
+sbt run
+```
+
+That should download all the dependencies and run the example
+
 ## Idea
 
 Imagine your task is to convert a spreadsheet to a list of records. So you start off with this:
