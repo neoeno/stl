@@ -5,6 +5,9 @@ import org.apache.poi.ss.util.CellRangeAddress
 
 import scala.collection.JavaConverters._
 
+/* Spreadsheet
+ * Handles all of our spreadsheet-interfacing work.
+ */
 object Spreadsheet {
   case class CellParsingException(message: String) extends Exception(message)
   type Task = Map[String, Any]
@@ -13,6 +16,8 @@ object Spreadsheet {
     Option(workbook.getSheet(sheetName))
   }
 
+  // Given a range like "A1:Z99", returns an iterator of all cells
+  // encompassed in tht range
   def cellsInRange(sheet: Sheet)(rangeString: String): Iterator[Cell] = {
     val range = CellRangeAddress.valueOf(rangeString)
     sheet.rowIterator.asScala

@@ -6,7 +6,9 @@ import org.apache.poi.ss.usermodel._
 import troglodyte.stl.Operators._
 
 object Main extends App {
-  new Task("Violence", "A4:A101",
+  val workbook = WorkbookFactory.create(new File("examples/1/mps-figures.xls"))
+
+  val task = new Task("Violence", "A4:A101",
     List(
       Transformer(
         keyFn = fixedString("Date"),
@@ -21,5 +23,7 @@ object Main extends App {
         valueFn = column(2).andThen(value)
       )
     )
-  ).exportWorkbookToRecords(WorkbookFactory.create(new File("examples/1/mps-figures.xls"))).foreach(println(_))
+  )
+
+  task.exportWorkbookToRecords(workbook).foreach(println(_))
 }

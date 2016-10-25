@@ -7,6 +7,9 @@ import org.apache.poi.ss.usermodel.{Cell, Workbook, WorkbookFactory}
 
 import scala.collection.JavaConverters._
 
+/* Spreadshooter
+ * The public interface, intended to be consumable by both Java and Scala clients
+ */
 class Spreadshooter {
   var task: Task = _
   var workbook: Workbook = _

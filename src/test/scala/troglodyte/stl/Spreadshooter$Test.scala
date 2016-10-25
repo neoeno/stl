@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 
 import scala.collection.JavaConverters._
 
-class SpreadshooterTest extends FunSpec {
+class Spreadshooter$Test extends FunSpec {
   describe("using Scala collections") {
     describe("given a simple sheet & task") {
       val spreadshooter = new Spreadshooter()

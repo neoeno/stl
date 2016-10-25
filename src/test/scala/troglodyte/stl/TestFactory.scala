@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.{Cell, Workbook}
 object TestFactory {
   case class Formula(formula: String)
 
+  // Makes workbook objects as if they came straight out of a spreadsheet
   def makeWorkbook(sheetName: String)(rowSpecs: List[Any]*): Workbook = {
     val workbook = new HSSFWorkbook()
     val sheet = workbook.createSheet(sheetName)
@@ -29,6 +30,7 @@ object TestFactory {
     workbook
   }
 
+  // Just to keep these Apache-POI objects out of the tests
   def makeFormula(formula: String): Formula = {
     Formula(formula)
   }
