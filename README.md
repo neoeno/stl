@@ -37,7 +37,7 @@ Imagine your task is to convert a spreadsheet to a list of records. So you start
 
 And end up with this:
 
-```json
+```
 [
   {
     col1: "hello",
