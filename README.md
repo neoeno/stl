@@ -185,11 +185,11 @@ val task = new Task("sheet1", "A2:A3",
   List(
     Extractor(
 
-      keyFn = columnHeading("A1", "name"),  // since they're records, we need a key — this produces the key
-                                            // here the function just checks the cell given contains the
-                                            // second argument, and then returns the second argument
-                                            // (this is to ensure the spreadsheet is still as the author
-                                            //  envisaged)
+      keyFn = columnHeading("A1", "name"),  // Since we're producing records, we need a key and a value — this
+                                            // produces the key. This function checks that the cell address
+                                            // provided (arg 1) contains the label (arg 2), and then returns
+                                            // the second argument (this is to ensure the spreadsheet is
+                                            // still as the author envisaged)
 
       valueFn = column(0).andThen(getValue) // You can see it ended up more declarative — go to column 0,
                                             // then get the value.
