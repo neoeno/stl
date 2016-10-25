@@ -11,11 +11,11 @@ class Spreadshooter$Test extends FunSpec {
       val spreadshooter = new Spreadshooter()
       spreadshooter.setWorkbook(TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4)))
       spreadshooter.setTask("sheet1", "A2:A3", List(
-        Transformer[Cell](
+        Extractor[Cell](
           keyFn   = _ => "col1",
           valueFn = Operators.column(0).andThen(Operators.value)
         ),
-        Transformer[Cell](
+        Extractor[Cell](
           keyFn   = _ => "col2",
           valueFn = Operators.column(1).andThen(Operators.value)
         )
@@ -34,11 +34,11 @@ class Spreadshooter$Test extends FunSpec {
       val spreadshooter = new Spreadshooter()
       spreadshooter.setWorkbook(TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4)))
       spreadshooter.setTask("sheet1", "A2:A3", List(
-        Transformer[Cell](
+        Extractor[Cell](
           keyFn   = _ => "col1",
           valueFn = Operators.column(0).andThen(Operators.value)
         ),
-        Transformer[Cell](
+        Extractor[Cell](
           keyFn   = _ => "col2",
           valueFn = Operators.column(1).andThen(Operators.value)
         )

@@ -14,11 +14,11 @@ class Spreadshooter {
   var task: Task = _
   var workbook: Workbook = _
 
-  def setTask(sheetName: String, keyCellsAddressRange: String, columns: Seq[Transformer[Cell]]): Unit = {
+  def setTask(sheetName: String, keyCellsAddressRange: String, columns: Seq[Extractor[Cell]]): Unit = {
     task = new Task(sheetName, keyCellsAddressRange, columns)
   }
 
-  def setTask(sheetName: String, keyCellsAddressRange: String, columns: java.util.List[Transformer[Cell]]): Unit = {
+  def setTask(sheetName: String, keyCellsAddressRange: String, columns: java.util.List[Extractor[Cell]]): Unit = {
     task = new Task(sheetName, keyCellsAddressRange, columns.asScala)
   }
 

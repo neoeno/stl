@@ -164,7 +164,7 @@ In the end the API looked something like this:
 val workbook = WorkbookFactory.create(new File("examples/1/mps-figures.xls"))
 val task = new Task("sheet1", "A2:A3",
   List(
-    Transformer(                            // Analogous to the 'extractors' above
+    Extractor(
 
       keyFn = columnHeading("A1", "name"),  // since they're records, we need a key — this produces the key
                                             // here the function just checks the cell given contains the
@@ -179,7 +179,7 @@ val task = new Task("sheet1", "A2:A3",
                                             // The idea is to create a library of 'operators' that can
                                             // be chained together to produce useful effects
     ),
-    Transformer(
+    Extractor(
       keyFn = columnHeading("A2", "size"),
       valueFn = column(1).andThen(getValue)
     )

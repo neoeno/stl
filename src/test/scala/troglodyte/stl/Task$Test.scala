@@ -4,15 +4,15 @@ import org.apache.poi.ss.usermodel.Cell
 import org.scalatest.FunSpec
 
 class Task$Test extends FunSpec {
-  describe(".extractRecordsByTask") {
+  describe(".exportWorkbookToRecords") {
     describe("given a simple sheet & task") {
       val workbook = TestFactory.makeWorkbook("sheet1")(List("col1", "col2"), List(1, 2), List(3, 4))
       val simpleTask = new Task("sheet1", "A2:A3", List(
-          Transformer[Cell](
+          Extractor[Cell](
             keyFn   = _ => "col1",
             valueFn = Operators.column(0).andThen(Operators.value)
           ),
-          Transformer[Cell](
+          Extractor[Cell](
             keyFn   = _ => "col2",
             valueFn = Operators.column(1).andThen(Operators.value)
           )
@@ -27,7 +27,7 @@ class Task$Test extends FunSpec {
     }
   }
 
-  describe(".extractRecordsByTask") {
+  describe(".exportWorkbookToRecords") {
     describe("given a sheet and task with some gaps") {
       val workbook = TestFactory.makeWorkbook("sheet1")(
         List("col1", "col2"),
@@ -36,11 +36,11 @@ class Task$Test extends FunSpec {
         List(3)
       )
       val simpleTask = new Task("sheet1", "A2:A4", List(
-          Transformer[Cell](
+          Extractor[Cell](
             keyFn   = _ => "col1",
             valueFn = Operators.column(0).andThen(Operators.value)
           ),
-          Transformer[Cell](
+          Extractor[Cell](
             keyFn   = _ => "col2",
             valueFn = Operators.column(1).andThen(Operators.value)
           )

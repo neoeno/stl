@@ -10,15 +10,15 @@ object Main extends App {
 
   val task = new Task("Violence", "A4:A101",
     List(
-      Transformer(
+      Extractor(
         keyFn = fixedString("Date"),
         valueFn = column(0).andThen(value)
       ),
-      Transformer(
+      Extractor(
         keyFn = columnHeading("B3", "VAP Offences"),
         valueFn = column(1).andThen(value)
       ),
-      Transformer(
+      Extractor(
         keyFn = columnHeading("C3", "Violence with injury (VWI)"),
         valueFn = column(2).andThen(value)
       )
